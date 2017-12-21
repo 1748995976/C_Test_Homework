@@ -1,10 +1,12 @@
 #include<stdio.h>
 #include<stdlib.h>
+#include<string.h>
 struct s_list{
     char number[11];
     char name[21];
     char subject[4][20];
     float goal[4];
+    float average;
     struct s_list *next;
 };
 void create_list(struct s_list **headp,int n);
@@ -12,7 +14,7 @@ int main(void)
 {
      char search1[11];
      char search2[20];
-     int i,N;
+     int i,b=0,N;
      printf("Please input the number of students\n");
      scanf("%d",&N);//学生的数量
      float a;
@@ -31,6 +33,7 @@ int main(void)
                 if(strcmp(p->subject[i],search2)==0){
                     printf("input new point\n");
                     scanf("%f",&p->goal[i]);
+                    p->average=(p->goal[0]+p->goal[1]+p->goal[2]+p->goal[3])/4;
                     break;
                 }
             }
@@ -55,9 +58,8 @@ int main(void)
         for(i=0,a=0;i<4;i++){
             printf("%s:",p->subject[i]);
             printf("%-6.2f  ",p->goal[i]);
-            a=a+p->goal[i];
         }
-        printf("平均成绩:%-6.2f\n",a/4);
+        printf("平均成绩:%-6.2f\n",p->average);
         p=p->next;
      }
      return 0;
@@ -75,8 +77,11 @@ void create_list(struct s_list **headp,int n)
     }//将科目名称赋给数组
     scanf("%s",loc_head->number);
     scanf("%s",loc_head->name);
-    for(a=0;a<4;a++)
+    for(a=0,i=0;a<4;a++){
         scanf("%f",&(loc_head->goal[a]));
+        i=loc_head->goal[a]+i;
+    }
+    loc_head->average=i/4;
     tail=loc_head;
     for(b=1;b<n;b++){
         tail->next=(struct s_list *)malloc(sizeof(struct s_list));
@@ -88,8 +93,11 @@ void create_list(struct s_list **headp,int n)
         }
         scanf("%s",tail->number);
         scanf("%s",tail->name);
-        for(a=0;a<4;a++)
+        for(a=0,i=0;a<4;a++){
             scanf("%f",&(tail->goal[a]));
+            i=tail->goal[a]+i;
+        }
+        tail->average=i/4;
     }
     tail->next=NULL;
     *headp=loc_head;
