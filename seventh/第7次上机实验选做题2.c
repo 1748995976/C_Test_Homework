@@ -10,7 +10,7 @@ struct s_list{
     struct s_list *next;
 };
 void create_list(struct s_list **headp,int n);
-void compare(struct s_list **headp,int n);
+void compare(struct s_list **headp);
 int main(void)
 {
      char search1[11];
@@ -24,7 +24,7 @@ int main(void)
      create_list(&head,N);
      p=head;
      printf("\nIf you want change someone\'s point ,");
-     printf("please input his student number ,else input # to leave.\n");
+     printf("Please input his student number ,else input # to leave.\n");
      scanf("%s",search1);
      for(;p!=NULL,search1[0]!='#';){
          if(strcmp(p->number,search1)==0){
@@ -38,15 +38,15 @@ int main(void)
                     break;
                 }
             }
-            printf("Continue correct? if continue please input student number,");
+            printf("continue correct? if continue please input student number ,");
             printf(" else input # to leave.\n");
             scanf("%s",search1);
          }
          else
             p=p->next;
          if(p==NULL){
-            printf("Not exist this student ,please input again.");
-            printf("If you want to leave ,please input #.\n");
+            printf("Not exist this student,please input again.");
+            printf("if you want to leave ,please input #.\n");
             scanf("%s",search1);
             p=head;
          }
@@ -63,7 +63,19 @@ int main(void)
         printf("平均成绩:%-6.2f\n",p->average);
         p=p->next;
      }
-     compare(&head,N);
+     p=head;
+     compare(&p);
+     printf("the score in order\n");
+     while(p){
+        puts(p->number);
+        puts(p->name);
+        for(i=0,a=0;i<4;i++){
+            printf("%s:",p->subject[i]);
+            printf("%-6.2f  ",p->goal[i]);
+        }
+        printf("平均成绩:%-6.2f\n",p->average);
+        p=p->next;
+     }
      return 0;
 }
 void create_list(struct s_list **headp,int n)
@@ -104,47 +116,40 @@ void create_list(struct s_list **headp,int n)
     tail->next=NULL;
     *headp=loc_head;
 }
-void compare(struct s_list **headp,int n)
+void compare(struct s_list **headp)
 {
-    int i,a,c,l;
-    char e;
-    float b;
-    struct s_list *p;
-    for(i=0;i<n-1;i++){
-        p=*headp;
-        for(a=0;a<n-i-1;a++,p=p->next){
-                if(p->average>p->next->average){
-                    for(c=0;c<11;c++){
-                        l=p->number[c];
-                        p->number[c]=p->next->number[c];
-                        p->next->number[c]=l;
-                    }
-                    for(c=0;c<21;c++){
-                        e=p->name[c];
-                        p->name[c]=p->next->name[c];
-                        p->next->name[c]=e;
-                    }
-                    for(c=0;c<4;c++){
-                        b=p->goal[c];
-                        p->goal[c]=p->next->goal[c];
-                        p->next->goal[c]=b;
-                    }
-                    b=p->average;
-                    p->average=p->next->average;
-                    p->next->average=b;
-                }
+    struct s_list *prior1,*prior2,*p1,*p2,*t;
+    int i=0;
+    p1=*headp;
+    for(p2=p1->next,prior2=p1;p2!=NULL;prior2=p2,p2=p2->next)
+        if(p1->average>p2->average){
+            prior2->next=p1;
+            t=p1->next;
+            p1->next=p2->next;
+            (*headp)=p2;
+            p2->next=t;
+            p1=p2;
         }
-    }
-    p=*headp;
-    printf("\nthe score in order:\n");
-    while(p){
-        puts(p->number);
-        puts(p->name);
-        for(i=0,a=0;i<4;i++){
-            printf("%s:",p->subject[i]);
-            printf("%-6.2f  ",p->goal[i]);
-        }
-        printf("平均成绩:%-6.2f\n",p->average);
-        p=p->next;
-     }
+    for(prior1=*headp,p1=prior1->next;p1->next!=NULL;prior1=p1,p1=p1->next)
+        for(p2=p1->next,prior2=p1;p2!=NULL;prior2=p2,p2=p2->next)
+            if(p1->average>p2->average){
+                t=p2->next;
+                prior1->next=p2;
+                prior2->next=p1;
+                p2->next=p1->next;
+                p1->next=t;
+                p1=p2;
+            }
 }
+/*u1
+nie
+100 100 100 100
+u2
+wang
+99 99 99 99
+u3
+li
+98 98 98 98
+u4
+ren
+97 97 97 97*/

@@ -8,9 +8,9 @@ struct s_list{
     float goal[4];
     float average;
     struct s_list *next;
+    struct s_list *prior;
 };
 void create_list(struct s_list **headp,int n);
-void compare(struct s_list **headp,int n);
 int main(void)
 {
      char search1[11];
@@ -26,7 +26,7 @@ int main(void)
      printf("\nIf you want change someone\'s point ,");
      printf("please input his student number ,else input # to leave.\n");
      scanf("%s",search1);
-     for(;p!=NULL,search1[0]!='#';){
+     for(;p!=head->prior,search1[0]!='#';){
          if(strcmp(p->number,search1)==0){
             printf("Please input which subject\'point that you want change.\n");
             scanf("%s",search2);
@@ -44,7 +44,7 @@ int main(void)
          }
          else
             p=p->next;
-         if(p==NULL){
+         if(p==head->prior){
             printf("Not exist this student ,please input again.");
             printf("If you want to leave ,please input #.\n");
             scanf("%s",search1);
@@ -53,7 +53,7 @@ int main(void)
      }
      printf("\n");
      p=head;
-     while(p){
+     do{
         puts(p->number);
         puts(p->name);
         for(i=0,a=0;i<4;i++){
@@ -62,8 +62,7 @@ int main(void)
         }
         printf("平均成绩:%-6.2f\n",p->average);
         p=p->next;
-     }
-     compare(&head,N);
+     }while(p!=head);
      return 0;
 }
 void create_list(struct s_list **headp,int n)
@@ -87,6 +86,7 @@ void create_list(struct s_list **headp,int n)
     tail=loc_head;
     for(b=1;b<n;b++){
         tail->next=(struct s_list *)malloc(sizeof(struct s_list));
+        tail->next->prior=tail;
         tail=tail->next;
         for(a=0;a<4;a++){
             for(i=0;sj[a][i]!='\0';i++)
@@ -101,50 +101,7 @@ void create_list(struct s_list **headp,int n)
         }
         tail->average=i/4;
     }
-    tail->next=NULL;
+    tail->next=loc_head;
+    loc_head->prior=tail;
     *headp=loc_head;
-}
-void compare(struct s_list **headp,int n)
-{
-    int i,a,c,l;
-    char e;
-    float b;
-    struct s_list *p;
-    for(i=0;i<n-1;i++){
-        p=*headp;
-        for(a=0;a<n-i-1;a++,p=p->next){
-                if(p->average>p->next->average){
-                    for(c=0;c<11;c++){
-                        l=p->number[c];
-                        p->number[c]=p->next->number[c];
-                        p->next->number[c]=l;
-                    }
-                    for(c=0;c<21;c++){
-                        e=p->name[c];
-                        p->name[c]=p->next->name[c];
-                        p->next->name[c]=e;
-                    }
-                    for(c=0;c<4;c++){
-                        b=p->goal[c];
-                        p->goal[c]=p->next->goal[c];
-                        p->next->goal[c]=b;
-                    }
-                    b=p->average;
-                    p->average=p->next->average;
-                    p->next->average=b;
-                }
-        }
-    }
-    p=*headp;
-    printf("\nthe score in order:\n");
-    while(p){
-        puts(p->number);
-        puts(p->name);
-        for(i=0,a=0;i<4;i++){
-            printf("%s:",p->subject[i]);
-            printf("%-6.2f  ",p->goal[i]);
-        }
-        printf("平均成绩:%-6.2f\n",p->average);
-        p=p->next;
-     }
 }
