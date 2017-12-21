@@ -1,11 +1,13 @@
 #include<stdio.h>
+#include<math.h>
 #define S(x,y,z) (x+y+z)/2
-#define p S(x,y,z)
-#define area(p,x,y,z) sqrt(p*(p-x)p(p-y)*(p-z))
-void main(void)
+#define area(p,x,y,z) sqrt(p*(p-x)*(p-y)*(p-z))
+int main(void)
 {
-    int a,b,c,p;
-    printf("请输入三角形的三条边的边长:\n");
-    scanf("%d %d %d,&a,&b,&c");
-    printf("s=%d,area=%d",S(a,b,c),area(p,a,b,c));
+    double a,b,c,d;
+    while(scanf("%lf %lf %lf",&a,&b,&c)!=EOF){
+        d=S(a,b,c);
+        printf("s=%0.0lf,area=%0.6lf\n",d,area(d,a,b,c));
+    }
+    return 0;
 }
